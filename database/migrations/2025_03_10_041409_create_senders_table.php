@@ -13,13 +13,15 @@ class CreateSendersTable extends Migration
      */
     public function up()
     {
-        Schema::create('senders', function (Blueprint $table) {
-            $table->id(); // Cột ID tự động tăng
-            $table->string('name'); // Tên người gửi
-            $table->string('contact'); // Thông tin liên hệ của người gửi
-            $table->text('address')->nullable(); // Địa chỉ có thể bỏ trống
-            $table->timestamps(); // Các cột created_at và updated_at
-        });
+        if (!Schema::hasTable('senders')) {
+            Schema::create('senders', function (Blueprint $table) {
+                $table->id(); // Cột ID tự động tăng
+                $table->string('name'); // Tên người gửi
+                $table->string('contact'); // Thông tin liên hệ của người gửi
+                $table->text('address')->nullable(); // Địa chỉ có thể bỏ trống
+                $table->timestamps(); // Các cột created_at và updated_at
+            });
+        }
     }
 
     /**
