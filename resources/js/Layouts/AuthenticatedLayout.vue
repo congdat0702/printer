@@ -46,8 +46,8 @@ const printGHN = async () => {
                         .mainPrints:last-of-type { page-break-after: avoid; } 
                         @page { size: 105mm 74mm; margin: 0; } 
                     }
-                    .title { font-size: 20px; font-weight: 900; margin-bottom: 10px; line-height: 1.2; text-transform: uppercase; }
-                    .code { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; width: 100%; text-align: center; }
+                    .title { font-size: 20px; font-weight: bold; margin-bottom: 10px; line-height: 1.2; text-transform: uppercase; }
+                    .code { font-weight: bold; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; width: 100%; text-align: center; }
                 </style>
             </head>
             <body>
