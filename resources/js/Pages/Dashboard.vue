@@ -142,18 +142,18 @@ export default {
           let allBills = '';
           for (let i = 1; i <= quantity; i++) {
               const senderInfo = `
-        <p class="print-bold">${this.senderInfo.name}</p>
-        <p class="print-bold">${this.senderInfo.contact}</p>
-        <p class="print-bold">Địa chỉ: ${this.senderInfo.address}</p>
+        <p class="print-bold">${(this.senderInfo.name || '').toUpperCase()}</p>
+        <p class="print-bold">${(this.senderInfo.contact || '').toUpperCase()}</p>
+        <p class="print-bold">Địa chỉ: ${(this.senderInfo.address || '').toUpperCase()}</p>
       `;
               const receiverInfo = `
         ${this.formData.name ? `<p class="print-bold print-large">TÊN: ${this.formData.name.toUpperCase()}</p>` : ''}
-        ${this.formData.phone ? `<p class="print-large"><strong>SĐT:</strong> <span class="print-italic">${this.formData.phone}</span></p>` : ''}
+        ${this.formData.phone ? `<p class="print-large"><strong>SĐT:</strong> <span class="print-italic">${this.formData.phone.toUpperCase()}</span></p>` : ''}
         ${this.formData.address ? `<p class="print-large"><strong>ĐỊA CHỈ:</strong> <span class="print-italic">${this.formData.address.toUpperCase()}</span></p>` : ''}
-        ${this.formData.company ? `<p class="print-italic"><strong>ĐVVC:</strong> ${this.formData.company}</p>` : ''}
-        ${this.formData.cod ? `<p class="print-italic"><strong>COD:</strong> ${this.formData.cod}</p>` : ''}
-        ${this.formData.item ? `<p class="print-italic"><strong>TÊN HÀNG:</strong> ${this.formData.item}</p>` : ''}
-        ${this.formData.payer ? `<p class="print-italic"><strong>TIỀN CƯỚC:</strong> ${this.formData.payer}</p>` : ''}
+        ${this.formData.company ? `<p class="print-italic"><strong>ĐVVC:</strong> ${this.formData.company.toUpperCase()}</p>` : ''}
+        ${this.formData.cod ? `<p class="print-italic"><strong>COD:</strong> ${this.formData.cod.toUpperCase()}</p>` : ''}
+        ${this.formData.item ? `<p class="print-italic"><strong>TÊN HÀNG:</strong> ${this.formData.item.toUpperCase()}</p>` : ''}
+        ${this.formData.payer ? `<p class="print-italic"><strong>TIỀN CƯỚC:</strong> ${this.formData.payer.toUpperCase()}</p>` : ''}
       `;
               allBills += `
         <div class="mainPrints">

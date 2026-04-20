@@ -33,19 +33,27 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Cài Nodejs + NPM
 WORKDIR /var/www/html
 
-# Copy mã nguồn dự án vào container
-COPY . .
-
 # Cài đặt Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Phân quyền cho storage và bootstrap/cache trước khi install
+# Cấu hình tối ưu hóa Docker Cache: Copy file cài đặt packages trước
+COPY composer.json composer.lock package.json package-lock.json ./
+
+# Cài đặt package của PHP & Node (Chỉ chạy lại khi các file Lock thay đổi)
+RUN composer install --no-dev --no-scripts --no-autoloader
+RUN npm install
+
+# Copy toàn bộ mã nguồn dự án vào container
+COPY . .
+
+# Khởi tạo autoload cho Composer sau khi đã copy toàn bộ code
+RUN composer dump-autoload --optimize
+
+# Phân quyền cho storage và bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Cài đặt package của PHP & Node, và build frontend
-RUN composer install --no-dev --optimize-autoloader
-RUN npm install
+# Build frontend (Vue/Vite)
 RUN npm run build
 
 EXPOSE 80

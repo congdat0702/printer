@@ -5,9 +5,105 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import Modal from '@/Components/Modal.vue';
 import { Link } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const showingNavigationDropdown = ref(false);
+const showGhnModal = ref(false);
+const showGhnConfirm = ref(false);
+const ghnCode = ref('');
+const pendingGhnCode = ref('');
+
+const printGHN = async () => {
+    if (!ghnCode.value) return;
+    const code = ghnCode.value.trim().toUpperCase();
+    
+    const maxChars = 8;
+    const computedFontSize = code.length > maxChars ? Math.floor(54 * (maxChars / code.length)) : 54;
+    
+    const content = `
+        <html>
+            <head>
+                <title>In đơn GHN</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
+                    .mainPrints { 
+                        width: 105mm; height: 74mm; 
+                        background: white; border: none; 
+                        box-sizing: border-box; 
+                        padding: 3mm;
+                        display: flex; flex-direction: column; 
+                        justify-content: center; align-items: center; text-align: center;
+                        margin: auto;
+                    }
+                    @media print { 
+                        body { display: block; background-color: white; }
+                        .mainPrints { page-break-after: always; box-shadow: none; border: none; margin: 0; } 
+                        .mainPrints:last-of-type { page-break-after: avoid; } 
+                        @page { size: 105mm 74mm; margin: 0; } 
+                    }
+                    .title { font-size: 20px; font-weight: 900; margin-bottom: 10px; line-height: 1.2; text-transform: uppercase; }
+                    .code { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; width: 100%; text-align: center; }
+                </style>
+            </head>
+            <body>
+                <div class="mainPrints">
+                    <div class="title">MÃ VẬN CHUYỂN<br/>GIAO HÀNG NHANH</div>
+                    <div class="code" style="font-size: ${computedFontSize}px;">${code}</div>
+                </div>
+                <script>
+                    window.print();
+                    window.onafterprint = function() { window.close(); }
+                <\/script>
+            </body>
+        </html>
+    `;
+    const printWindow = window.open('', '_blank');
+    if(printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(content);
+        printWindow.document.close();
+        printWindow.focus();
+    }
+    
+    pendingGhnCode.value = code;
+    
+    const checkClosed = setInterval(async () => {
+        if (printWindow && printWindow.closed) {
+            clearInterval(checkClosed);
+            showGhnConfirm.value = true;
+        }
+    }, 500);
+    
+    ghnCode.value = '';
+    showGhnModal.value = false;
+};
+
+const confirmSaveGhn = async () => {
+    try {
+        await axios.post('/print-history', {
+            recipient_name: 'Đơn GHN: ' + pendingGhnCode.value,
+            recipient_phone: 'Mã vạch GHN',
+            shipping_unit: 'Giao Hàng Nhanh'
+        });
+        showGhnConfirm.value = false;
+        pendingGhnCode.value = '';
+        if (window.location.pathname.includes('print-history')) {
+            window.location.reload();
+        } else {
+            alert('Đã lưu lịch sử in GDN thành công!');
+        }
+    } catch (e) {
+        console.error('Lỗi lưu lịch sử', e);
+        alert('Lỗi không thể lưu lịch sử in');
+    }
+};
+
+const cancelSaveGhn = () => {
+    showGhnConfirm.value = false;
+    pendingGhnCode.value = '';
+};
 </script>
 
 <template>
@@ -29,7 +125,7 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
@@ -39,6 +135,15 @@ const showingNavigationDropdown = ref(false);
                                 <!-- <NavLink :href="route('manage')" :active="route().current('manage')">
                                     Manage Users
                                 </NavLink> -->
+
+                                <!-- Nút bật Modal in GHN (trông như 1 thẻ tab) -->
+                                <button 
+                                    @click="showGhnModal = true"
+                                    class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out cursor-pointer"
+                                    style="margin-left: 2rem;"
+                                >
+                                    In Đơn GHN
+                                </button>
                             </div>
                             
                         </div>
@@ -156,5 +261,56 @@ const showingNavigationDropdown = ref(false);
                 <slot />
             </main>
         </div>
+
+        <!-- Modal in GHN -->
+        <Modal :show="showGhnModal" @close="showGhnModal = false">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">
+                    In đơn Giao Hàng Nhanh
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <input 
+                        type="text" 
+                        v-model="ghnCode" 
+                        @keyup.enter="printGHN"
+                        placeholder="Nhập hoặc quét mã GHN rồi nhấn Enter..." 
+                        class="flex-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm"
+                        autofocus
+                    >
+                    <button 
+                        @click="printGHN" 
+                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                    >
+                        IN GHN
+                    </button>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Modal Xác nhận lưu GHN chuyên nghiệp -->
+        <Modal :show="showGhnConfirm" @close="cancelSaveGhn">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">
+                    Xác nhận kết quả in
+                </h2>
+                <p class="text-sm text-gray-600 mb-6">
+                    Lệnh in mã GHN <strong>{{ pendingGhnCode }}</strong> đã được xuất ra. Bạn đã in thành công và muốn lưu vào nhật ký in không?
+                </p>
+                <div class="flex items-center justify-end space-x-3">
+                    <button 
+                        @click="cancelSaveGhn"
+                        class="px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+                    >
+                        Chưa in (Không lưu)
+                    </button>
+                    <button 
+                        @click="confirmSaveGhn"
+                        class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                    >
+                        Lưu vào Lịch sử
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </div>
 </template>
