@@ -237,7 +237,7 @@
     "name": "vue"
   },
   "resources/js/Layouts/AuthenticatedLayout.vue": {
-    "file": "assets/AuthenticatedLayout-Bdtdbeup.js",
+    "file": "assets/AuthenticatedLayout-BqQ_-sPx.js",
     "name": "AuthenticatedLayout",
     "src": "resources/js/Layouts/AuthenticatedLayout.vue",
     "isDynamicEntry": true,
@@ -507,7 +507,7 @@
     ]
   },
   "resources/js/Pages/Dashboard.vue": {
-    "file": "assets/Dashboard-MuvMyfm-.js",
+    "file": "assets/Dashboard-0d_tHN0k.js",
     "name": "Dashboard",
     "src": "resources/js/Pages/Dashboard.vue",
     "isDynamicEntry": true,
@@ -548,7 +548,7 @@
     ]
   },
   "resources/js/Pages/Manage.vue": {
-    "file": "assets/Manage-ChSqkyRc.js",
+    "file": "assets/Manage-CYJvEUGO.js",
     "name": "Manage",
     "src": "resources/js/Pages/Manage.vue",
     "isDynamicEntry": true,
@@ -591,7 +591,7 @@
     ]
   },
   "resources/js/Pages/PrintHistory.vue": {
-    "file": "assets/PrintHistory-dgPHbQTA.js",
+    "file": "assets/PrintHistory-DWKbXxPF.js",
     "name": "PrintHistory",
     "src": "resources/js/Pages/PrintHistory.vue",
     "isDynamicEntry": true,
@@ -632,7 +632,7 @@
     ]
   },
   "resources/js/Pages/Profile/Edit.vue": {
-    "file": "assets/Edit-CVLyFZFG.js",
+    "file": "assets/Edit-VfU6ehQ_.js",
     "name": "Edit",
     "src": "resources/js/Pages/Profile/Edit.vue",
     "isDynamicEntry": true,
@@ -786,7 +786,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DmXXzeP7.js",
+    "file": "assets/app-BXBqadKX.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

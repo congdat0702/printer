@@ -23,11 +23,14 @@ const printGHN = async () => {
     const computedFontSize = code.length > maxChars ? Math.floor(54 * (maxChars / code.length)) : 54;
     
     const content = `
+        <!DOCTYPE html>
         <html>
             <head>
+                <meta charset="UTF-8">
                 <title>In đơn GHN</title>
                 <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
+                    * { font-family: Arial, Helvetica, sans-serif; }
+                    body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
                     .mainPrints { 
                         width: 105mm; height: 74mm; 
                         background: white; border: none; 
